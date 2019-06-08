@@ -39,10 +39,6 @@ vector<int> getPrimes(int numberOfPrimes)
         cout << "ERREUR: Cannot open primes.txt." << endl;
     }
 
-    if (numberOfPrimes > numberOfReadPrimes) {
-        cout << "Not enough primes in the file " << numberOfPrimes << "required, " <<  numberOfReadPrimes << " in the file" << endl;
-    }
-
     return primeList;
 }
 
