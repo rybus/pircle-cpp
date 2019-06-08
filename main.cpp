@@ -8,8 +8,8 @@ void pause();
 
 int main(int argc, char** argv)
 {
-    //double expensionFactor;
-    int windowLength = 1000;
+    int const windowLength(1000);
+
     int numberOfPrimes = 0, expensionFactor = 0;
     SDL_Renderer *window;
 

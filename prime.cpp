@@ -1,6 +1,6 @@
 #include "prime.h"
 
-void drawSpiralLogarithm(SDL_Renderer *renderer, int windowLength, double a)
+void drawSpiralLogarithm(SDL_Renderer *renderer, int const windowLength, double a)
 {
     SDL_Point center = {
         windowLength / 2,
@@ -23,11 +23,13 @@ void drawSpiralLogarithm(SDL_Renderer *renderer, int windowLength, double a)
     }
 }
 
-void drawPrimesOnSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumberOfPrimes)
+void drawPrimesOnSpiral(SDL_Renderer *renderer, int const windowLength, int expectedNumberOfPrimes)
 {
     SDL_Color red = {255, 0, 55};
+    SDL_Color blue = {0, 0, 255};
     double angle, radius;
     int displayedPrimeNumbers = 0;
+    int previousPrime = 0;
 
     SDL_Point center = {
         windowLength / 2,
@@ -44,7 +46,7 @@ void drawPrimesOnSpiral(SDL_Renderer *renderer, int windowLength, int expectedNu
     std::vector<int>::iterator primeNumber = primeList.begin();
     while (displayedPrimeNumbers < expectedNumberOfPrimes && primeNumber != primeList.end())
     {
-        angle = (*primeNumber * 2 * M_PI) / (displayedPrimeNumbers - 1);
+        angle = (*primeNumber * 2 * M_PI) / (expectedNumberOfPrimes);
         radius = (displayedPrimeNumbers*windowLength)/expectedNumberOfPrimes;
 
         drawPointOnCircle(renderer, center, angle, radius, red);
@@ -52,19 +54,26 @@ void drawPrimesOnSpiral(SDL_Renderer *renderer, int windowLength, int expectedNu
         displayedPrimeNumbers++;
         if (displayedPrimeNumbers < expectedNumberOfPrimes)
         {   
+            previousPrime = *primeNumber;
             ++primeNumber;
         }
     }
 }
 
+bool isPythagorianPrimeNumber(int number)
+{
+    return (number - 1) % 8 == 0;
+}
 
-void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumberOfPrimes)
+void drawUlamSpiral(SDL_Renderer *renderer, int const windowLength, int expectedNumberOfPrimes)
 {
     SDL_Color red = {255, 0, 55};
-    int X(windowLength), Y(windowLength);
-    int x(0), y(0);
+    int X(windowLength/2), Y(windowLength/2);
+    int x(0), y(0), i(0);
     int ample = 1;
     int number = 1;
+    int XRepartition[windowLength];
+    int YRepartition[windowLength];
 
     int displayedPrimeNumbers = 0;
 
@@ -80,11 +89,18 @@ void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumber
         std::cout << primeList.size() << " provided." << std::endl;
     }
 
+    for (i = 0; i < windowLength; i++) {
+        XRepartition[i] = 0;
+        YRepartition[i] = 0;
+    }
+
     std::vector<int>::iterator primeNumber = primeList.begin();
     while (abs(x) < X  && abs(y) < Y && displayedPrimeNumbers <= expectedNumberOfPrimes && primeNumber != primeList.end()) {
         while (x <= ample) {
             if (number == *primeNumber) {
                 drawPointOnPlan(renderer, center, x, y, red);
+                XRepartition[x + windowLength/2]++;
+                YRepartition[y + windowLength/2]++;
                 displayedPrimeNumbers++;
                 ++primeNumber;
             }
@@ -95,6 +111,8 @@ void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumber
         while (y <= ample) {
             if (number == *primeNumber) {
                 drawPointOnPlan(renderer, center, x, y, red);
+                XRepartition[x + windowLength/2]++;
+                YRepartition[y + windowLength/2]++;
                 displayedPrimeNumbers++;
                 ++primeNumber;
             }
@@ -105,6 +123,8 @@ void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumber
         while (x >= -ample) {
             if (number == *primeNumber) {
                 drawPointOnPlan(renderer, center, x, y, red);
+                XRepartition[x + windowLength/2]++;
+                YRepartition[y + windowLength/2]++;
                 displayedPrimeNumbers++;
                 ++primeNumber;
             }
@@ -115,6 +135,8 @@ void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumber
         while (y >= -ample) {
             if (number == *primeNumber) {
                 drawPointOnPlan(renderer, center, x, y, red);
+                XRepartition[x + windowLength/2]++;
+                YRepartition[y + windowLength/2]++;
                 displayedPrimeNumbers++;
                 ++primeNumber;
             }
@@ -122,6 +144,39 @@ void drawUlamSpiral(SDL_Renderer *renderer, int windowLength, int expectedNumber
             number++;
         }
         ample++;
+    }
+
+    drawXRepartition(renderer, XRepartition, windowLength);
+    drawYRepartition(renderer, YRepartition, windowLength);
+}
+
+void drawXRepartition(SDL_Renderer *renderer, int repartitionX[], int windowLength)
+{
+    int i(0), j(0);
+    SDL_Color color = {0, 153, 51};
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+    for (i = 0; i < windowLength; i++) 
+    {
+        for (j = windowLength; j > windowLength - repartitionX[i]; j--) 
+        {
+            SDL_RenderDrawPoint(renderer, i, j);
+        }
+    }
+}
+
+void drawYRepartition(SDL_Renderer *renderer, int repartitionY[], int windowLength)
+{
+    int i(0), j(0);
+    SDL_Color color = {153, 0, 153};
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+
+    for (i = 0; i < windowLength; i++) 
+    {
+        for (j = windowLength; j > windowLength - repartitionY[i]; j--) 
+        {
+            SDL_RenderDrawPoint(renderer, i, j);
+        }
     }
 }
 
