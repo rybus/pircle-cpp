@@ -1,21 +1,30 @@
 CXX = g++
-CXXFLAGS = -lSDL2
+CXXFLAGS = -c -std=c++11 -w -lSDL2
+LDFLAGS = $(shell sdl2-config --libs) 
 
-all: pircle
+BIN_DIR = bin
+EXE = pircle
 
-pircle: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o pircle $(OBJS) 
+SRC_DIR = src
+SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 
-depend: .depend
+OBJ_DIR = obj
+OBJECTS = $(subst $(SRC_DIR)/, $(OBJ_DIR)/, $(patsubst %.cpp, %.o, $(SOURCES)))
 
-.depend: $(SRCS)
-	$(RM) ./.depend
-	$(CXX) $(CXXFLAGS) -MM $^>>./.depend;
+.PHONY: all clean run
+
+all: $(EXE)
+
+$(EXE): $(OBJECTS)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(OBJECTS) $(LDFLAGS) -o $(BIN_DIR)/$(EXE) 
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $< -o $@ $(CXXFLAGS)
 
 clean:
-	$(RM) $(OBJS)
+	rm -rf obj bin
 
-distclean: clean
-	$(RM) *~ .depend
-
-include .depend
+run:
+	./$(BIN_DIR)/$(EXE)

@@ -1,4 +1,7 @@
-#include "store.h"
+#include <iostream>
+#include <fstream>
+
+#include "generate.h"
 
 using namespace std;
 
@@ -17,8 +20,11 @@ void generate(int numberOfPrime)
     }
 }
 
-vector<int> getPrimes(int numberOfPrimes)
+vector<int> getPrimes(int numberOfPrimes, string filePath = "")
 {
+    if (filePath == "") {
+
+    }
     int numberOfReadPrimes = 0;
     vector<int> primeList;
 
@@ -28,7 +34,7 @@ vector<int> getPrimes(int numberOfPrimes)
     {
         string primeNumber;
 
-        while(getline(primeFile, primeNumber) && primeList.size() <= numberOfPrimes)
+        while(getline(primeFile, primeNumber) && (int) primeList.size() <= numberOfPrimes)
         {
             primeList.push_back(stoi(primeNumber));
             numberOfReadPrimes++;
